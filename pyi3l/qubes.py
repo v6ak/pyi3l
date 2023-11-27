@@ -1,26 +1,14 @@
 from dataclasses import dataclass
 from typing import Union, Optional
 
-from pyi3l.tree import Command, WindowContent, SystemCommand, Window, Swallow
+from pyi3l.tree import Command, WindowContent, SystemCommand, Window, Swallow, CmdModifier
 from pyi3l.patterns import Pattern, Literal
 
 @dataclass
-class Qube:
+class Qube(CmdModifier):
     name: str
     unicode_titles: bool = False
-    
-    def __call__(self, arg: Union[WindowContent, Command, Window]):
-        if isinstance(arg, WindowContent):
-            return self.adjust_content(arg)
-        elif isinstance(arg, Window):
-            return self.adjust_window(arg)
-        elif isinstance(arg, Command):
-            return self.adjust_command(arg)
-        raise ValueError(f"Unexpected arg type: {arg}")
-        
-    def adjust_window(self, win: Window):
-        return win.map_content(self.adjust_content)
-        
+
     def adjust_content(self, content: WindowContent):
         return WindowContent(
             swallows = list(map(self.adjust_swallow, content.swallows)),
@@ -48,7 +36,7 @@ class Qube:
             win_class = self._prepend_name(swallow.win_class),
             instance = self._prepend_name(swallow.instance),
             machine = swallow.machine,
-            title = self.adjust_title(swallow.title),
+            title = self._adjust_title(swallow.title),
             window_role = swallow.window_role,
         )
         
@@ -60,7 +48,7 @@ class Qube:
             command.to_shell_command()
         ])
 
-    def adjust_title(self, title: Optional[Pattern]):
+    def _adjust_title(self, title: Optional[Pattern]):
         if title is None:
             return None
         elif self.unicode_titles:

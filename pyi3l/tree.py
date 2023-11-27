@@ -3,7 +3,7 @@ from dataclasses import dataclass, replace
 from .util import only_nonnone
 from .patterns import Pattern
 import json
-from typing import List, Optional
+from typing import List, Optional, Union
 import subprocess
 import shlex
 from functools import partial
@@ -241,3 +241,32 @@ Horizontal = partial(Layout, "splith")
 Vertical = partial(Layout, "splitv")
 Tabbed = partial(Layout, "tabbed")
 Stacked = partial(Layout, "stacked")
+
+
+class CmdModifier(ABC):
+
+    def __call__(self, arg: Union[WindowContent, Command, Window]):
+        if isinstance(arg, WindowContent):
+            return self.adjust_content(arg)
+        elif isinstance(arg, Window):
+            return self.adjust_window(arg)
+        elif isinstance(arg, Command):
+            return self.adjust_command(arg)
+        raise ValueError(f"Unexpected arg type: {arg}")
+
+    def adjust_window(self, win: Window):
+        return win.map_content(self.adjust_content)
+
+    @abstractmethod
+    def adjust_command(self, command: Command): pass
+
+    def adjust_content(self, content: WindowContent):
+        return WindowContent(
+            swallows = content.swallows,
+            default_name = content.default_name,
+            commands = list(map(
+                self.adjust_command,
+                content.commands or []
+            )),
+            flatpak_ids = content.flatpak_ids,
+        )
