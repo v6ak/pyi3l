@@ -151,7 +151,7 @@ class WindowContent:
     def as_flatpak(self):
         return replace(
             self,
-            commands=map(lambda id: SystemCommand(["flatpak", "run", id]), self.flatpak_ids)
+            commands=list(map(lambda id: SystemCommand(["flatpak", "run", id]), self.flatpak_ids)),
         )
 
     def placeholder_only(self):
