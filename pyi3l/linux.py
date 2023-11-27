@@ -16,6 +16,19 @@ def firefox():
         ],
     )
 
+def geany():
+    return WindowContent(
+        swallows = [Swallow(
+            win_class = Literal("Geany"),
+            instance = Literal("geany"),
+        )],
+        default_name = "Geany",
+        flatpak_ids = ["org.geany.Geany"],
+        commands = [
+            SystemCommand(["geany"]),
+        ],
+    )
+
 def jetbrains_ide(ide_id, ide_name, project_name):
     tpe = Literal(f"jetbrains-{ide_id}") + AnyOf([Literal("-ce"), Literal("")])
     return WindowContent(
