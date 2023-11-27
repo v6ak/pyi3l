@@ -67,17 +67,18 @@ class Element(ABC):
 
     @abstractmethod
     def map_windows(self, f): pass
-        
-class Node(Element):
-    pass
 
 class Toplevel(Element):
     @abstractmethod
     def to_layout_string(self, indent = None):
         pass
 
+class Node(Toplevel):
+    def to_layout_string(self, indent = None):
+        return json.dumps(self.to_layout(), indent=indent)
+
 @dataclass
-class RawElement(Toplevel, Node):
+class RawElement(Node):
     raw: dict
     commands: Optional[List[Command]]
     
@@ -199,7 +200,7 @@ class Window(Node):
         )
 
 @dataclass
-class Layout(Node, Toplevel):
+class Layout(Node):
     layout: str
     nodes: List[Element]
     marks: List[str] = None
@@ -216,10 +217,7 @@ class Layout(Node, Toplevel):
             }),
             **(self.others or {}),
         }
-        
-    def to_layout_string(self, indent = None):
-        return json.dumps(self.to_layout(), indent=indent)
-        
+
     def to_commands(self):
         return [
             cmd
