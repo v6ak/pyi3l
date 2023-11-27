@@ -1,7 +1,21 @@
+from dataclasses import dataclass
 from typing import Optional
 from functools import partial
-from .tree import WindowContent, SystemCommand, Command, Swallow
+from .tree import WindowContent, SystemCommand, Command, Swallow, CmdModifier
 from .patterns import Literal, Anything, AnyOf
+
+@dataclass
+class WorkingDir(CmdModifier):
+    directory: str
+
+    def adjust_command(self, cmd: Command):
+        return SystemCommand([
+            "env",
+            "-C",
+            self.directory,
+            "--",
+            *cmd.to_system_command(),
+        ])
 
 def firefox():
     return WindowContent(
