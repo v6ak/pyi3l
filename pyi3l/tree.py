@@ -204,6 +204,11 @@ class Window(Node):
     name: Optional[str] = None
     percent: Optional[float] = None
     marks: Optional[List[str]] = None
+    border: Optional[str] = None
+    current_border_width: Optional[int] = None
+    floating: Optional[str] = None
+    type: Optional[str] = None
+
     others: Optional[dict] = None
 
     def to_commands(self):
@@ -216,18 +221,29 @@ class Window(Node):
                 "percent": self.percent,
                 "marks": self.marks,
                 "swallows": list(map(lambda sw: sw.to_json(), self.content.swallows)),
+                "border": self.border,
+                "current_border_width": self.current_border_width,
+                "floating": self.floating,
+                "type": self.type,
             }),
             **(self.others or {}),
         }
 
     @staticmethod
     def import_window(j):
+        KEYWORDS = {
+            "name", "percent", "marks", "swallows", "border", "current_border_width", "floating", "type"
+        }
         return Window(
             content = WindowContent.import_content(j),
             name = j.get("name"),
             percent = j.get("percent"),
             marks = noneize_defaults(j.get("marks"), []),
-            others = noneize_defaults(remove_keys(j, {"name", "percent", "marks", "swallows"}), {}),
+            border = noneize_defaults(j.get("border"), "normal"),
+            current_border_width = noneize_defaults(j.get("current_border_width"), 2),
+            floating = noneize_defaults(j.get("floating"), "auto_off"),
+            type = noneize_defaults(j.get("type"), "con"),
+            others = noneize_defaults(remove_keys(j, KEYWORDS), {}),
         )
 
     def map_windows(self, f):
@@ -251,6 +267,10 @@ class Layout(Node):
     nodes: List[Element]
     marks: Optional[List[str]] = None
     percent: Optional[float] = None
+    border: Optional[str] = None
+    floating: Optional[str] = None
+    type: Optional[str] = None
+
     others: Optional[dict] = None
 
     def to_layout(self):
@@ -260,18 +280,26 @@ class Layout(Node):
                 "marks": self.marks,
                 "percent": self.percent,
                 "layout": self.layout,
+                "border": self.border,
+                "floating": self.floating,
+                "type": self.type,
+
             }),
             **(self.others or {}),
         }
 
     @staticmethod
     def import_layout(j):
+        KEYWORDS={"nodes", "marks", "percent", "layout", "border", "floating", "type"}
         return Layout(
             marks=noneize_defaults(j.get("marks"), []),
             percent=j.get("percent"),
             layout=j.get("layout"),
             nodes=list(map(Node.import_node, j["nodes"])),
-            others = noneize_defaults(remove_keys(j, {"nodes", "marks", "percent", "layout"}), {})
+            border = noneize_defaults(j.get("border"), "normal"),
+            floating = noneize_defaults(j.get("floating"), "auto_off"),
+            type = noneize_defaults(j.get("type"), "con"),
+            others = noneize_defaults(remove_keys(j, KEYWORDS), {})
         )
 
     def to_commands(self):
