@@ -35,6 +35,54 @@ could look like this:
         commands = [SystemCommand(["firefox"])],
     ))
 
+### No clutter in exported layouts
+
+When you export a layout by i3-save-layout, you get many lines of clutter, and it takes some time to find the important parts:
+
+    {
+        "border": "normal",
+        "current_border_width": 2,
+        "floating": "auto_off",
+        "geometry": {
+           "height": 1050,
+           "width": 1290,
+           "x": 0,
+           "y": 0
+        },
+        "marks": [],
+        "name": "Welcome to Firefox ___ Mozilla Firefox",
+        "percent": 0.05,
+        "swallows": [
+           {
+           // "class": "^disp4202\\:firefox$",
+           // "instance": "^disp4202\\:Navigator$",
+           // "title": "^Welcome\\ to\\ Firefox\\ ___\\ Mozilla\\ Firefox$"
+           }
+        ],
+        "type": "con"
+    },
+
+While pyi3l-save-tree layout isn't perfect and there is some room for improvement, its output is shorter much more readable:
+
+    Window(
+        WindowContent(
+            [
+                Swallow(
+                    win_class=Literal("disp4202:firefox"),
+                    instance=Literal("disp4202:Navigator"),
+                    title=Literal("Welcome to Firefox ___ Mozilla Firefox"),
+                )
+            ]
+        ),
+        name="Welcome to Firefox ___ Mozilla Firefox",
+        percent=0.05,
+        others={
+            "geometry": {"height": 1050, "width": 1290, "x": 0, "y": 0}
+        },
+    ),
+
+There are some ideas how to make it even more concise and better maintainable.
+
 ### Reusable parts
 
 Do you feel like your layouts are copy&paste? Or maybe you have multiple very similar layouts.
@@ -297,5 +345,5 @@ simpler than the output of i3-save-tree, and still much more complex than the DS
 
 ## Ideas for future development
 
-* Import layouts from i3-save-tree or existing JSON layouts. WIP in import.py.
+* Import existing JSON layouts. WIP in import.py. (It might look like the same job as importing layouts from i3-save-layout, but there are some differences.)
 * Run-or-focus semantic

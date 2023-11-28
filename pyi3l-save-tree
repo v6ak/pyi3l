@@ -1,0 +1,19 @@
+#!/bin/bash
+# safety settings
+set -u
+set -e
+set -o pipefail
+
+i3-save-tree |
+	(
+		read _
+		sed \
+			-e 's#// split.*$##' \
+			-e 's#// floating_con with .*$##' \
+			-e 's#^\( *\)//#\1  #'
+	) |
+	jq . --slurp |
+	env \
+		PYTHONPATH="$(dirname "$(realpath "$0")")" \
+		python -m pyi3l.import |
+	black -

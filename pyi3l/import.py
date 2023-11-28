@@ -1,18 +1,17 @@
 #import json5
 import json
 import sys
-from tree import *
+from .tree import *
+from .reverse_tree import *
 
 # This is partially done import from the i3's layouts.
 # a. Existing layouts can be read by read_objs. This ignores all the comments.
 # b. New layouts can be preprocessed by this hack:
 #         i3-save-tree  | (read _; sed -e 's#// split.*$##' -e 's#^\( *\)//#\1  #') | jq . --slurp
 #
-# Missing parts:
-# 2. Toplevel to Python, maybe using ats.unparse (and indent it using tokenize)
-#
-# Optionally, we could also recognize known patterns in the regexes and generate the rest.
-#
+# Ideas for improvement:
+# * we could also recognize known patterns in the regexes and generate the rest.
+# * remove percent when unneeded
 
 
 def read_obj(f, parse):
@@ -49,4 +48,7 @@ def read_objs(f, parse):
 
 
 #data = read_objs(sys.stdin.buffer, json5.loads) #json5.load(sys.stdin)
-#print(json.dumps(data))
+
+in_json = json.load(sys.stdin)   #  TODO: other variants of read, expecially for existing layouts
+tree = Toplevel.import_toplevel(in_json)
+print(pythonize_full({None: tree}))
