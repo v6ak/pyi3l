@@ -249,7 +249,7 @@ class Window(Node):
 class Layout(Node):
     layout: str
     nodes: List[Element]
-    marks: List[str] = None
+    marks: Optional[List[str]] = None
     percent: Optional[float] = None
     others: Optional[dict] = None
 
