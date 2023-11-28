@@ -10,7 +10,6 @@ With i3 layouts, you need to define layout separately from commands you run. For
 this to your layout:
 
     {
-      "type": "con",
       "name": "Firefox",
       "swallows": [
         {
@@ -64,7 +63,6 @@ The example with Firefox is rather simple. Imagine having a predefined terminal 
 With traditional layouts, you need to repeat the title later:
 
     {
-      "type": "con",
       "name": "Docspell UI build",
       "percent": 0.319672131147541,
       "swallows": [
@@ -210,7 +208,6 @@ You can save it to docspell.py and run `./docspell.py --export` to get equivalen
         {
           "nodes": [
             {
-              "type": "con",
               "name": "docspell \u00bb Firefox",
               "swallows": [
                 {
@@ -222,7 +219,6 @@ You can save it to docspell.py and run `./docspell.py --export` to get equivalen
             {
               "nodes": [
                 {
-                  "type": "con",
                   "name": "docspell \u00bb Docspell SBT",
                   "percent": 0.680327868852459,
                   "swallows": [
@@ -234,7 +230,6 @@ You can save it to docspell.py and run `./docspell.py --export` to get equivalen
                   ]
                 },
                 {
-                  "type": "con",
                   "name": "docspell \u00bb Docspell UI build",
                   "percent": 0.319672131147541,
                   "swallows": [
@@ -257,7 +252,6 @@ You can save it to docspell.py and run `./docspell.py --export` to get equivalen
         {
           "nodes": [
             {
-              "type": "con",
               "name": "docspell \u00bb IntelliJ IDEA",
               "swallows": [
                 {
@@ -268,7 +262,6 @@ You can save it to docspell.py and run `./docspell.py --export` to get equivalen
               ]
             },
             {
-              "type": "con",
               "name": "docspell \u00bb Terminal",
               "swallows": [
                 {

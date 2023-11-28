@@ -175,7 +175,6 @@ class Window(Node):
     def to_layout(self):
         return {
             **only_nonnone({
-                "type": "con",
                 "name": self.name or self.content.default_name,
                 "percent": self.percent,
                 "marks": self.marks,
