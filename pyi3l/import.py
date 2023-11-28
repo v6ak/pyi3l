@@ -9,7 +9,6 @@ from tree import *
 #         i3-save-tree  | (read _; sed -e 's#// split.*$##' -e 's#^\( *\)//#\1  #') | jq . --slurp
 #
 # Missing parts:
-# 1. JSON to Toplevel
 # 2. Toplevel to Python, maybe using ats.unparse (and indent it using tokenize)
 #
 # Optionally, we could also recognize known patterns in the regexes and generate the rest.

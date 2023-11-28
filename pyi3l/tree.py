@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, replace
-from .util import only_nonnone
+from .util import only_nonnone, remove_keys, noneize_defaults
 from .patterns import Pattern
 import json
 from typing import List, Optional, Union
@@ -73,9 +73,26 @@ class Toplevel(Element):
     def to_layout_string(self, indent = None):
         pass
 
+    @staticmethod
+    def import_toplevel(j):
+        if isinstance(j, list):
+            if len(j) == 1:
+                return Node.import_node(j[0])
+            else:
+                return Multi.import_multi(j)
+        else:
+            return Node.import_node(j)
+
 class Node(Toplevel):
     def to_layout_string(self, indent = None):
         return json.dumps(self.to_layout(), indent=indent)
+
+    @staticmethod
+    def import_node(j):
+        if j.get("layout") is None:
+            return Window.import_window(j)
+        else:
+            return Layout.import_layout(j)
 
 @dataclass
 class RawElement(Node):
@@ -118,6 +135,10 @@ class Multi(Toplevel):
     def without_marks(self):
         return Multi(elements=list(map(lambda el: el.without_marks(), self.elements)))
 
+    @staticmethod
+    def import_multi(l):
+        return Multi(list(map(Node.import_node, l)))
+
 @dataclass
 class Swallow:
     win_class: Optional[Pattern] = None
@@ -141,6 +162,16 @@ class Swallow:
             "window_role": re(self.window_role),
         })
 
+    @staticmethod
+    def import_swallow(j):
+        return Swallow(
+            win_class = Pattern.import_pattern(j.get("class")),
+            instance = Pattern.import_pattern(j.get("instance")),
+            machine = Pattern.import_pattern(j.get("machine")),
+            title = Pattern.import_pattern(j.get("title")),
+            window_role = Pattern.import_pattern(j.get("window_role")),
+        )
+
 @dataclass
 class WindowContent:
     swallows: List[Swallow]
@@ -159,6 +190,12 @@ class WindowContent:
             self,
             commands=[],
             flatpak_ids=[],
+        )
+
+    @staticmethod
+    def import_content(j):
+        return WindowContent(
+            swallows = list(map(Swallow.import_swallow, j.get("swallows"))),
         )
 
 @dataclass
@@ -182,6 +219,16 @@ class Window(Node):
             }),
             **(self.others or {}),
         }
+
+    @staticmethod
+    def import_window(j):
+        return Window(
+            content = WindowContent.import_content(j),
+            name = j.get("name"),
+            percent = j.get("percent"),
+            marks = noneize_defaults(j.get("marks"), []),
+            others = noneize_defaults(remove_keys(j, {"name", "percent", "marks", "swallows"}), {}),
+        )
 
     def map_windows(self, f):
         return f(self)
@@ -216,6 +263,16 @@ class Layout(Node):
             }),
             **(self.others or {}),
         }
+
+    @staticmethod
+    def import_layout(j):
+        return Layout(
+            marks=noneize_defaults(j.get("marks"), []),
+            percent=j.get("percent"),
+            layout=j.get("layout"),
+            nodes=list(map(Node.import_node, j["nodes"])),
+            others = noneize_defaults(remove_keys(j, {"nodes", "marks", "percent", "layout"}), {})
+        )
 
     def to_commands(self):
         return [
