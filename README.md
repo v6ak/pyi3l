@@ -342,6 +342,7 @@ simpler than the output of i3-save-tree, and still much more complex than the DS
 ## Limitations
 
 * Qubes OS titles aren't compatible with raw patterns
+* We expect no special characters to occur in temporary file names.
 
 ## Ideas for future development
 
