@@ -276,10 +276,10 @@ class Layout(Node):
     def to_layout(self):
         return {
             **only_nonnone({
+                "layout": self.layout,
                 "nodes": list(map(lambda e: e.to_layout(), self.nodes)),
                 "marks": self.marks,
                 "percent": self.percent,
-                "layout": self.layout,
                 "border": self.border,
                 "floating": self.floating,
                 "type": self.type,

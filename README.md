@@ -252,8 +252,10 @@ You can save it to docspell.py and run `./docspell.py --export` to get equivalen
     ## Workspace 3
     layout_file=$(mktemp)
     echo '{
+      "layout": "splith",
       "nodes": [
         {
+          "layout": "tabbed",
           "nodes": [
             {
               "name": "docspell \u00bb Firefox",
@@ -265,6 +267,7 @@ You can save it to docspell.py and run `./docspell.py --export` to get equivalen
               ]
             },
             {
+              "layout": "splitv",
               "nodes": [
                 {
                   "name": "docspell \u00bb Docspell SBT",
@@ -291,13 +294,12 @@ You can save it to docspell.py and run `./docspell.py --export` to get equivalen
               ],
               "marks": [
                 "docspell-compilation"
-              ],
-              "layout": "splitv"
+              ]
             }
-          ],
-          "layout": "tabbed"
+          ]
         },
         {
+          "layout": "tabbed",
           "nodes": [
             {
               "name": "docspell \u00bb IntelliJ IDEA",
@@ -319,11 +321,9 @@ You can save it to docspell.py and run `./docspell.py --export` to get equivalen
                 }
               ]
             }
-          ],
-          "layout": "tabbed"
+          ]
         }
-      ],
-      "layout": "splith"
+      ]
     }' > $layout_file
     i3-msg workspace 3\;append_layout $layout_file
     rm $layout_file
