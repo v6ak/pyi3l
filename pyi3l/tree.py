@@ -25,10 +25,10 @@ class ShellCommand(Command):
 
     def run(self):
         subprocess.run(self.to_shell_command())
-        
+
     def to_shell_command(self):
-        return self.command        
-        
+        return self.command
+
     def to_system_command(self):
         return ["bash", "-c", self.command]
 
@@ -38,7 +38,7 @@ class SystemCommand(Command):
 
     def run(self):
         subprocess.run(self.command)
-        
+
     def to_shell_command(self):
         return " ".join(map(shlex.quote, self.command))
 
@@ -48,7 +48,7 @@ class SystemCommand(Command):
 @dataclass
 class PartialSystemCommand:
     command: List[str]
-    
+
     def __call__(self, *args):
         return SystemCommand([*self.command, *args])
 
@@ -57,11 +57,11 @@ class Element(ABC):
     @abstractmethod
     def to_layout(self):
         pass
-    
-    @abstractmethod    
+
+    @abstractmethod
     def to_commands(self):
         pass
-        
+
     @abstractmethod
     def without_marks(self): pass
 
@@ -98,13 +98,13 @@ class Node(Toplevel):
 class RawElement(Node):
     raw: dict
     commands: Optional[List[Command]]
-    
+
     def to_layout(self):
         return raw
-        
+
     def to_commands(self):
         return self.commands or []
-    
+
     def map_windows(self, f):
         return self
 
@@ -114,17 +114,17 @@ class RawElement(Node):
 @dataclass
 class Multi(Toplevel):
     elements: List[Element]
-    
+
     def to_layout(self):
         return list(map(lambda e: e.to_layout(), self.elements))
-        
+
     def to_commands(self):
         return [
             cmd
             for e in self.elements
             for cmd in e.to_commands()
         ]
-    
+
     def to_layout_string(self, indent = None):
         l = self.to_layout()
         return "\n\n".join(map(lambda e: json.dumps(e, indent=indent), l))
@@ -146,7 +146,7 @@ class Swallow:
     machine: Optional[Pattern] = None
     title: Optional[Pattern] = None
     window_role: Optional[Pattern] = None
-    
+
     def to_json(self):
         def re(value: Optional[Pattern]):
             if value is None:
@@ -178,7 +178,7 @@ class WindowContent:
     default_name: Optional[str] = None
     commands: Optional[List[Command]] = None
     flatpak_ids: Optional[List[str]] = None
-    
+
     def as_flatpak(self):
         return replace(
             self,
@@ -201,14 +201,14 @@ class WindowContent:
 @dataclass
 class Window(Node):
     content: WindowContent
-    others: Optional[dict] = None
     name: Optional[str] = None
     percent: Optional[float] = None
     marks: Optional[List[str]] = None
-    
+    others: Optional[dict] = None
+
     def to_commands(self):
         return self.content.commands or []
-        
+
     def to_layout(self):
         return {
             **only_nonnone({
@@ -232,13 +232,13 @@ class Window(Node):
 
     def map_windows(self, f):
         return f(self)
-    
+
     def map_content(self, f):
         return replace(
             self,
             content=f(self.content)
         )
-        
+
     def without_marks(self):
         return replace(
             self,
@@ -283,15 +283,16 @@ class Layout(Node):
 
     def map_windows(self, f):
         return self.map_nodes(lambda el: el.map_windows(f))
-    
+
     def without_marks(self):
         return self.map_nodes(lambda el: el.without_marks(f))
-    
+
     def map_nodes(self, f):
         return replace(
             self,
             nodes=list(map(f, self.nodes)),
         )
+
 
 Horizontal = partial(Layout, "splith")
 Vertical = partial(Layout, "splitv")
