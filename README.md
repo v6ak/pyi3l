@@ -346,5 +346,5 @@ simpler than the output of i3-save-tree, and still much more complex than the DS
 
 ## Ideas for future development
 
-* Import existing JSON layouts. WIP in import.py. (It might look like the same job as importing layouts from i3-save-layout, but there are some differences.)
+* Import existing JSON layouts. WIP in import.py. (It might look like the same job as importing layouts from i3-save-layout, but there are some differences, as [described in issue #7](https://github.com/v6ak/pyi3l/issues/7).)
 * Run-or-focus semantic
