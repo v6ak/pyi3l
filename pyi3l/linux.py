@@ -30,6 +30,31 @@ def firefox():
         ],
     )
 
+def chromium_app(url, instance_override = None):
+    if instance_override is None:
+        import re
+        from urllib.parse import urlsplit
+        spl = urlsplit(url)
+
+        instance = re.sub(
+            r'[^a-zA-Z0-9_.-]',
+            '_',
+            spl.netloc + (f'__{spl.path}' if spl.path != '' else '')
+        )
+    else:
+        instance = instance_override or url
+
+    return WindowContent(
+        swallows = [
+            Swallow(
+                win_class=Literal("Chromium-browser"),
+                instance=Literal(instance),
+            ),
+        ],
+        commands = [SystemCommand(["chromium", f"--app={url}"])],
+        default_name = url
+    )
+
 def geany():
     return WindowContent(
         swallows = [Swallow(
