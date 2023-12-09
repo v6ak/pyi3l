@@ -8,8 +8,7 @@ i3-save-tree |
 	(
 		read _
 		sed \
-			-e 's#// split.*$##' \
-			-e 's#// floating_con with .*$##' \
+			-e 's#^\( *\)// \(split\|floating_con with\|tabbed\|stacked\).*$##' \
 			-e 's#^\( *\)//#\1  #'
 	) |
 	jq . --slurp |
