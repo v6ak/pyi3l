@@ -321,11 +321,17 @@ class Layout(Node):
             nodes=list(map(f, self.nodes)),
         )
 
+FloatingLayout = partial(Layout, type="floating_con")
 
 Horizontal = partial(Layout, "splith")
 Vertical = partial(Layout, "splitv")
 Tabbed = partial(Layout, "tabbed")
 Stacked = partial(Layout, "stacked")
+
+FloatingHorizontal = partial(FloatingLayout, "splith")
+FloatingVertical = partial(FloatingLayout, "splitv")
+FloatingTabbed = partial(FloatingLayout, "tabbed")
+FloatingStacked = partial(FloatingLayout, "stacked")
 
 
 class CmdModifier(ABC):
