@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from typing import Union, Optional
 
 from pyi3l.tree import Command, WindowContent, SystemCommand, Window, Swallow, CmdModifier
-from pyi3l.patterns import Pattern, Literal
+from pyi3l.patterns import Pattern, Literal, Anything
 
 @dataclass
 class Qube(CmdModifier):
@@ -20,10 +20,10 @@ class Qube(CmdModifier):
             flatpak_ids = None,
         )
 
-    def _prepend_name(self, pattern: Pattern):
+    def _prepend_name(self, pattern: Pattern, swallow: Swallow):
         prefix = Literal(self.name + ":")
         if pattern is None:
-            if (self.win_class is not None) or (self.instance is not None):
+            if (swallow.win_class is not None) or (swallow.instance is not None):
                 # qube will be filtered by another attribute
                 return None
             else:
@@ -33,8 +33,8 @@ class Qube(CmdModifier):
 
     def adjust_swallow(self, swallow: Swallow):
         return Swallow(
-            win_class = self._prepend_name(swallow.win_class),
-            instance = self._prepend_name(swallow.instance),
+            win_class = self._prepend_name(swallow.win_class, swallow),
+            instance = self._prepend_name(swallow.instance, swallow),
             machine = swallow.machine,
             title = self._adjust_title(swallow.title),
             window_role = swallow.window_role,
