@@ -20,7 +20,7 @@ class WorkingDir(CmdModifier):
 def firefox():
     return WindowContent(
         swallows = [Swallow(
-            win_class = Literal("firefox"),
+            win_class = Literal("firefox") | Literal("org.mozilla.firefox"),
             instance = Literal("Navigator"),
         )],
         default_name = "Firefox",
