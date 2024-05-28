@@ -15,6 +15,9 @@ class Pattern(ABC):
     def __add__(self, other: "Pattern"):
         return CompoundPattern([self, other])
 
+    def __or__(self, other: "Pattern"):
+        return AnyOf([self, other])
+
     @staticmethod
     def import_pattern(s):
         if s is None:
