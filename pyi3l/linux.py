@@ -30,6 +30,18 @@ def firefox():
         ],
     )
 
+def chromium(url=None):
+    return WindowContent(
+        swallows = [
+            Swallow(
+                win_class=Literal("Chromium-browser"),
+                instance=Literal("chromium-browser"),
+            ),
+        ],
+        commands = [SystemCommand(["chromium", *([] if url is None else [url])])],
+        default_name = "Chromium" if url is None else f"Chromium: {url}"
+    )
+
 def chromium_app(url, instance_override = None):
     if instance_override is None:
         import re
