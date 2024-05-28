@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from typing import Optional
 from functools import partial
 from .tree import WindowContent, SystemCommand, Command, Swallow, CmdModifier
@@ -141,6 +141,14 @@ def toggl():
         flatpak_ids = ["com.toggl.TogglDesktop"],
         default_name = "Toggl",
     )
+
+
+def toggl_chromium():
+    return replace(
+        chromium_app("chrome-extension://oejgccbfbmkkpaidnkphaiaecficdnfn/src/pages/popup/index.html"),
+        default_name = "Toggl gadget",
+    )
+
 
 def xfce4_terminal(title = None, command: Optional[Command] = None):
     return WindowContent(
