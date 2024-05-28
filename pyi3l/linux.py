@@ -51,7 +51,7 @@ def chromium_app(url, instance_override = None):
         instance = re.sub(
             r'[^a-zA-Z0-9_.-]',
             '_',
-            spl.netloc + (f'__{spl.path}' if spl.path != '' else '')
+            spl.netloc + (f'_{spl.path}' if spl.path != '' else '')
         )
     else:
         instance = instance_override or url
