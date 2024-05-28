@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from abc import ABC, abstractmethod
-from typing import List
+from typing import List, Optional
 from .util import pcre_quote
 from functools import reduce
 
@@ -8,6 +8,9 @@ from functools import reduce
 class Pattern(ABC):
     @abstractmethod
     def to_pcre(self): pass
+
+    @abstractmethod
+    def to_python_re(self): pass
     
     @abstractmethod
     def map_chars(self, f): pass
@@ -72,7 +75,10 @@ class Literal(Pattern):
     
     def to_pcre(self):
         return pcre_quote(self.s)
-        
+
+    def to_python_re(self):
+        return re.escape(self.s)
+
     def map_chars(self, f):
         return Literal("".join(map(f, self.s)))
 
@@ -85,6 +91,9 @@ class Literal(Pattern):
 class Anything(Pattern):
     def to_pcre(self):
         return ".*"
+
+    def to_python_re(self):
+        return ".*"
     
     def map_chars(self, f):
         return self
@@ -95,6 +104,9 @@ class AnyOf(Pattern):
 
     def to_pcre(self):
         return "(" + "|".join(map(lambda p: p.to_pcre(), self.variants)) + ")"
+
+    def to_python_re(self):
+        return "(" + "|".join(map(lambda p: p.to_python_re(), self.variants)) + ")"
 
     def map_chars(self, f):
         return AnyOf(
@@ -115,6 +127,9 @@ class CompoundPattern(Pattern):
 
     def to_pcre(self):
         return "".join(map(lambda p: p.to_pcre(), self.subpatterns))
+
+    def to_python_re(self):
+        return "".join(map(lambda p: p.to_python_re(), self.subpatterns))
     
     def map_chars(self, f):
         return CompoundPattern(
@@ -132,9 +147,16 @@ class Raw(Pattern):
     # Please use composable PCRE regexes (without modifiers, without ^ and $)
     # ^ and $ will be added automatically afterwards
     pattern: str
-    
+    python_re: Optional[str]
+
     def to_pcre(self):
         return self.pattern
-    
+
+    def to_python_re(self):
+        if self.python_re is not None:
+            return self.python_re
+        else:
+            raise NotImplementedError(f'No Python regex alternative for {self.pattern}')
+
     def map_chars(self, f):
         raise Error(f"Cannot map chars of raw pattern {self}")
