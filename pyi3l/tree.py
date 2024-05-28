@@ -173,6 +173,40 @@ class Swallow:
         )
 
 @dataclass
+class Geometry:
+    x: Optional[int] = None
+    y: Optional[int] = None
+    width: Optional[int] = None
+    height: Optional[int] = None
+
+    others: Optional[dict] = None
+
+    def to_layout():
+        return {
+            **only_nonnone({
+                "x": self.x,
+                "y": self.y,
+                "width": self.width,
+                "height": self.height,
+            }),
+            **(self.others or {}),
+        }
+
+    @staticmethod
+    def import_geometry(j):
+        if j is None:
+            return None
+        else:
+            KEYWORDS = {"x", "y", "width", "height"}
+            return Geometry(
+                x = j.get("x"),
+                y = j.get("y"),
+                height = j.get("height"),
+                width = j.get("width"),
+                others = noneize_defaults(remove_keys(j, KEYWORDS), {}),
+            )
+
+@dataclass
 class WindowContent:
     swallows: List[Swallow]
     default_name: Optional[str] = None
@@ -208,6 +242,7 @@ class Window(Node):
     current_border_width: Optional[int] = None
     floating: Optional[str] = None
     type: Optional[str] = None
+    geometry: Optional[Geometry] = None
 
     others: Optional[dict] = None
 
@@ -225,6 +260,7 @@ class Window(Node):
                 "current_border_width": self.current_border_width,
                 "floating": self.floating,
                 "type": self.type,
+                "geometry": None if self.geometry is None else self.geometry.to_layout(),
             }),
             **(self.others or {}),
         }
@@ -232,7 +268,7 @@ class Window(Node):
     @staticmethod
     def import_window(j):
         KEYWORDS = {
-            "name", "percent", "marks", "swallows", "border", "current_border_width", "floating", "type"
+            "name", "percent", "marks", "swallows", "border", "current_border_width", "floating", "type", "geometry"
         }
         return Window(
             content = WindowContent.import_content(j),
@@ -243,6 +279,7 @@ class Window(Node):
             current_border_width = noneize_defaults(j.get("current_border_width"), 2),
             floating = noneize_defaults(j.get("floating"), "auto_off"),
             type = noneize_defaults(j.get("type"), "con"),
+            geometry = noneize_defaults(Geometry.import_geometry(j.get("geometry")), Geometry()),
             others = noneize_defaults(remove_keys(j, KEYWORDS), {}),
         )
 
@@ -270,6 +307,7 @@ class Layout(Node):
     border: Optional[str] = None
     floating: Optional[str] = None
     type: Optional[str] = None
+    rect: Optional[Geometry] = None
 
     others: Optional[dict] = None
 
@@ -283,6 +321,7 @@ class Layout(Node):
                 "border": self.border,
                 "floating": self.floating,
                 "type": self.type,
+                "rect": None if self.rect is None else self.rect.to_layout(),
 
             }),
             **(self.others or {}),
@@ -290,7 +329,7 @@ class Layout(Node):
 
     @staticmethod
     def import_layout(j):
-        KEYWORDS={"nodes", "marks", "percent", "layout", "border", "floating", "type"}
+        KEYWORDS={"nodes", "marks", "percent", "layout", "border", "floating", "type", "rect"}
         return Layout(
             marks=noneize_defaults(j.get("marks"), []),
             percent=j.get("percent"),
@@ -299,6 +338,7 @@ class Layout(Node):
             border = noneize_defaults(j.get("border"), "normal"),
             floating = noneize_defaults(j.get("floating"), "auto_off"),
             type = noneize_defaults(j.get("type"), "con"),
+            rect = noneize_defaults(Geometry.import_geometry(j.get("rect")), Geometry()),
             others = noneize_defaults(remove_keys(j, KEYWORDS), {})
         )
 
