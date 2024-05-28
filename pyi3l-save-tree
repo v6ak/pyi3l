@@ -15,4 +15,4 @@ i3-save-tree |
     env \
         PYTHONPATH="$(dirname "$(realpath "$0")")" \
         python -m pyi3l.import |
-    black -
+    black --line-length=120 -
