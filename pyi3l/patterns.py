@@ -118,6 +118,11 @@ class AnyOf(Pattern):
             variants=list(map(lambda c: c.optimize(), self.variants)),
         )
 
+    # just optimized version
+    def __or__(self, other: "Pattern"):
+        return AnyOf([*self.variants, other])
+
+
 @dataclass
 class CompoundPattern(Pattern):
     subpatterns: List[Pattern]
