@@ -5,14 +5,14 @@ set -e
 set -o pipefail
 
 i3-save-tree |
-	(
-		read _
-		sed \
-			-e 's#^\( *\)// \(split\|floating_con with\|tabbed\|stacked\).*$##' \
-			-e 's#^\( *\)//#\1  #'
-	) |
-	jq . --slurp |
-	env \
-		PYTHONPATH="$(dirname "$(realpath "$0")")" \
-		python -m pyi3l.import |
-	black -
+    (
+        read _
+        sed \
+            -e 's#^\( *\)// \(split\|floating_con with\|tabbed\|stacked\).*$##' \
+            -e 's#^\( *\)//#\1  #'
+    ) |
+    jq . --slurp |
+    env \
+        PYTHONPATH="$(dirname "$(realpath "$0")")" \
+        python -m pyi3l.import |
+    black -
