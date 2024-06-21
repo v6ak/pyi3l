@@ -151,12 +151,21 @@ def toggl_chromium():
 
 
 def xfce4_terminal(title = None, command: Optional[Command] = None):
+    title_pattern = Literal("Terminal - ") + Anything() if title is None else Literal(title)
     return WindowContent(
-        swallows = [Swallow(
-            win_class = Literal("Xfce4-terminal"),
-            instance = Literal("xfce4-terminal"),
-            title = Literal("Terminal - ") + Anything() if title is None else Literal(title),
-        )],
+        swallows = [
+            Swallow(
+                win_class = Literal("Xfce4-terminal"),
+                instance = Literal("xfce4-terminal"),
+                title = title_pattern,
+            ),
+            Swallow(
+                # Yeah, they suggest xterm, but xterm uses different class/instance
+                win_class = Literal("X-terminal-emulator"),
+                instance = Literal("x-terminal-emulator"),
+                title = title_pattern,
+            ),
+        ],
         default_name = title or "Terminal",
         commands = [
             SystemCommand([
