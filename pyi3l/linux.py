@@ -100,7 +100,7 @@ pycharm = partial(jetbrains_ide, "pycharm", "PyCharm")
 def thunderbird():
     return WindowContent(
         swallows = [Swallow(
-            win_class = Literal("thunderbird"),
+            win_class = Literal("thunderbird") | Literal("org.mozilla.thunderbird"),
             instance = Literal("Mail"),
         )],
         commands = [SystemCommand(["thunderbird"])],
