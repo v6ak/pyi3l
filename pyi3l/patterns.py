@@ -147,6 +147,7 @@ class CompoundPattern(Pattern):
             map(lambda c: c.optimize(), self.subpatterns)
         )
 
+
 @dataclass
 class Raw(Pattern):
     # Please use composable PCRE regexes (without modifiers, without ^ and $)
