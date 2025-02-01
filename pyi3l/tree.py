@@ -298,6 +298,12 @@ class Window(Node):
             marks=None
         )
 
+    def without_percent(self):
+        return replace(
+            self,
+            percent=None
+        )
+
 @dataclass
 class Layout(Node):
     layout: str
