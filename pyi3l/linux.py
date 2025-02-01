@@ -2,7 +2,8 @@ from dataclasses import dataclass, replace
 from typing import Optional
 from functools import partial
 from .tree import WindowContent, SystemCommand, Command, Swallow, CmdModifier
-from .patterns import Literal, Anything, AnyOf
+from .patterns import Literal, Anything, AnyOf, CompoundPattern
+import os.path
 
 @dataclass
 class WorkingDir(CmdModifier):
@@ -117,6 +118,22 @@ def signal():
         commands = [SystemCommand(["signal-desktop"])],
         flatpak_ids = ["org.signal.Signal"],
         default_name = "Signal",
+    )
+
+def visual_studio_code(path: Optional[str] = None):
+    return WindowContent(
+        swallows = [
+            Swallow(
+                win_class=Literal("Code"),
+                instance=Literal("code"),
+                title=CompoundPattern([
+                    Anything(),
+                    *([] if path is None else [Literal(" - " + os.path.basename(path))]),
+                    Literal(" - Visual Studio Code")
+                ]),
+            )
+        ],
+        commands = [SystemCommand(filter(lambda x: x is not None, ["code", path]))]
     )
 
 def element_io():
