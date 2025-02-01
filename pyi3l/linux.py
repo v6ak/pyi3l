@@ -151,7 +151,7 @@ def toggl_chromium():
 
 
 def xfce4_terminal(title = None, command: Optional[Command] = None):
-    title_pattern = Literal("Terminal - ") + Anything() if title is None else Literal(title)
+    title_pattern = (Literal("Terminal - ") + Anything()) | Literal("Terminal") if title is None else Literal(title)
     return WindowContent(
         swallows = [
             Swallow(
