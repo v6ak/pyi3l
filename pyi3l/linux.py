@@ -90,7 +90,7 @@ def jetbrains_ide(ide_id, ide_name, project_name):
         )],
         default_name = ide_name,
         commands = [
-            SystemCommand([ide_id + ".sh"]),
+            SystemCommand([ide_id]),
         ]
     )
 
