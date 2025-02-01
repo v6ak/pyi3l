@@ -295,7 +295,7 @@ class Window(Node):
     def without_marks(self):
         return replace(
             self,
-            marks = []
+            marks=None
         )
 
 @dataclass
